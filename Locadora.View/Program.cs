@@ -3,51 +3,56 @@ using Locadora.Models;
 using Microsoft.Data.SqlClient;
 using Utils.Databases;
 
-Cliente cliente = new Cliente("Felipe", "felipe.dev@gmail.com");
-//Documento documento = new Documento(1, "CPF", "47998764813", new DateOnly(2025, 3, 10), new DateOnly(2033, 3, 10));
-//Console.WriteLine(documento);
+Cliente cliente = new Cliente("Gustavo", "gustavo.dev@gmail.com");
+Documento documento = new Documento("RG", "343434343434", new DateOnly(2025, 3, 10), new DateOnly(2033, 3, 10));
 
 ClienteController clienteController = new ClienteController();
 
-try
-{
-    clienteController.AdicionarCliente(cliente);
-}
-catch (Exception ex)
-{
-    if (ex.Message.Contains("Violation of UNIQUE KEY"))
-    {
-        Console.WriteLine("Não é possível adicionar um novo cliente com o mesmo email!");
-    }
-}
+//try
+//{
+//    clienteController.AdicionarCliente(cliente, documento);
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
+
+//try
+//{
+//    var clientes = clienteController.ListarClientes();
+//    foreach (var item in clientes)
+//    {
+//        Console.WriteLine(item);
+//    }
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
 
 try
 {
-    var clientes = clienteController.ListarClientes();
-    foreach (var item in clientes)
-    {
-        Console.WriteLine(item);
-    }
-}
-catch (Exception ex)
+    clienteController.AtualizarDocumentoCliente("gustavo.dev@gmail.com", documento);
+    Console.WriteLine(clienteController.BuscarClienteEmail("gustavo.dev@gmail.com"));
+} catch(Exception ex)
 {
     Console.WriteLine(ex.Message);
 }
 
-try
-{
-    clienteController.AtualizarCliente("16993559811", "brunocapita.dev@gmail.com");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-}
+//try
+//{
+//    clienteController.AtualizarCliente("16993559811", "brunocapita.dev@gmail.com");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
 
-try
-{
-    clienteController.DeletarCliente("brunocapita.dev@gmail.com");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-}
+//try
+//{
+//    clienteController.DeletarCliente("brunocapita.dev@gmail.com");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}

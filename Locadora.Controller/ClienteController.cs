@@ -7,7 +7,7 @@ namespace Locadora.Controller
     public class ClienteController
     {
 
-        public void AdicionarCliente(Cliente cliente)
+        public void AdicionarCliente(Cliente cliente, Documento documento)
         {
             var connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
@@ -22,8 +22,14 @@ namespace Locadora.Controller
                     command.Parameters.AddWithValue("@Nome", cliente.Nome);
                     command.Parameters.AddWithValue("@Email", cliente.Email);
                     command.Parameters.AddWithValue("@Telefone", cliente.Telefone ?? (object)DBNull.Value);
+                    int clienteID = Convert.ToInt32(command.ExecuteScalar());
+                    cliente.setClienteId(clienteID);
 
-                    cliente.setClienteId(Convert.ToInt32(command.ExecuteScalar()));
+                    var documentoController = new DocumentoController();
+
+                    documento.setClienteID(clienteID);
+
+                    documentoController.AdicionarDocumento(documento, transaction, connection);
 
                     transaction.Commit();
                 }
@@ -48,7 +54,7 @@ namespace Locadora.Controller
             try
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand(Cliente.SELECTALLCLIENTES, connection);
+                SqlCommand command = new SqlCommand(Cliente.SELECTALLCLIENTESCOMDOCUMENTO, connection);
                 SqlDataReader reader = command.ExecuteReader();
                 List<Cliente> clientes = new List<Cliente>();
                 while (reader.Read())
@@ -58,7 +64,16 @@ namespace Locadora.Controller
                         reader["Email"].ToString(),
                         reader["Telefone"] != DBNull.Value ? reader["Telefone"].ToString() : null
                         );
-                    cliente.setClienteId((int)reader["ClienteID"]);
+                    //cliente.setClienteId((int)reader["ClienteID"]);
+
+                    var documento = new Documento(
+                            reader["TipoDocumento"].ToString(),
+                            reader["Numero"].ToString(),
+                            DateOnly.FromDateTime(reader.GetDateTime(5)),
+                            DateOnly.FromDateTime(reader.GetDateTime(6))
+                            );
+
+                    cliente.setDocumento(documento);
                     clientes.Add(cliente);
                 }
                 return clientes;
@@ -149,8 +164,29 @@ namespace Locadora.Controller
                     connection.Close();
                 }
             }
+        }
 
+        public void AtualizarDocumentoCliente(string email, Documento documento)
+        {
+            var clienteEncontrado = BuscarClienteEmail(email) ?? throw new Exception("Não existe cliente com esse email cadastrado!");
 
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    documento.setClienteID(clienteEncontrado.ClienteID);
+                    DocumentoController documentoController = new DocumentoController();
+
+                    documentoController.AtualizarDocumento(documento, transaction, connection);
+                    transaction.Commit();
+                }catch(Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar documento do cliente");
+                }
+            }
         }
 
         public void DeletarCliente(string email)

@@ -1,5 +1,6 @@
 ﻿using Locadora.Controller;
 using Locadora.Models;
+using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
 using Utils.Databases;
 
@@ -68,7 +69,7 @@ Categoria categoria = new Categoria("Carro de Luxo", "Carros CAROS", 100.00);
 CategoriaController categoriaController = new CategoriaController();
 
 
-try
+/*try
 {
     categoriaController.AdicionarCategoria(categoria);
     Console.WriteLine("Categoria adicionada com sucesso");
@@ -76,7 +77,7 @@ try
 catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
-}
+}*/
 
 //try
 //{
@@ -92,7 +93,7 @@ catch (Exception ex)
 //    Console.WriteLine(ex.Message);
 //}
 
-try
+/*try
 {
     categoriaController.AtualizarDiariaCategoria("Carro de Luxo", 140);
     Console.WriteLine("Categoria atualizada com sucesso");
@@ -106,7 +107,7 @@ try
 } catch(Exception ex)
 {
     Console.WriteLine(ex.ToString());
-}
+}*/
 
 //try
 //{
@@ -116,5 +117,66 @@ try
 //{
 //    Console.WriteLine(ex.Message);
 //}
+
+#endregion
+
+#region Veiculo
+
+var veiculoController = new VeiculoController();
+/*
+try
+{
+    var veiculo = new Veiculo(1, "Audi", "Q3", "123-345", 2024, EStatusVeiculo.DISPONIVEL.ToString());
+    veiculoController.AdicionarVeiculo(veiculo);
+    Console.WriteLine("Adicionado com sucesso");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
+*/
+
+/*try
+{
+    var veiculos = veiculoController.ListarTodosVeiculos();
+    Console.WriteLine($"Veiculos ({veiculos.Count}): ");
+    foreach (var veiculo in veiculos)
+    {
+        Console.WriteLine(veiculo);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+/*try
+{
+    Console.WriteLine(veiculoController.BuscarVeiculoPlaca("sa"));
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+/*try
+{
+    veiculoController.DeletarVeiculo("oisudoaiud");
+    Console.WriteLine("Carro deletado com sucesso");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+try
+{
+    veiculoController.AtualizarStatusVeiculo("123-345", EStatusVeiculo.DISPONIVEL.ToString());
+    Console.WriteLine("Veiculo atualizado com sucesso!");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 #endregion

@@ -4,7 +4,7 @@ using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
 using Utils.Databases;
 
-#region CLIENTE E DOCUMENTO   
+#region CLIENTE E DOCUMENTO
 
 //Cliente cliente = new Cliente("Gustavo", "gustavo.dev@gmail.com");
 //Documento documento = new Documento("RG", "343434343434", new DateOnly(2025, 3, 10), new DateOnly(2033, 3, 10));
@@ -63,7 +63,6 @@ using Utils.Databases;
 #endregion
 
 #region CATEGORIA E VEICULO
-
 
 Categoria categoria = new Categoria("Carro de Luxo", "Carros CAROS", 100.00);
 CategoriaController categoriaController = new CategoriaController();
@@ -169,7 +168,7 @@ catch (Exception ex)
     Console.WriteLine(ex.Message);
 }*/
 
-try
+/*try
 {
     veiculoController.AtualizarStatusVeiculo("123-345", EStatusVeiculo.DISPONIVEL.ToString());
     Console.WriteLine("Veiculo atualizado com sucesso!");
@@ -177,6 +176,62 @@ try
 catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
-}
+}*/
 
 #endregion
+
+var funcionarioController = new FuncionarioController();
+/*try
+{
+    var funcionario = new Funcionario("Bruno", "12345678910", "bruno@gmail.com", 1300.00);
+    funcionarioController.AdicionarFuncionario(funcionario);
+    Console.WriteLine("Funcionario adicionado com sucesso!");
+}
+
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+/*try
+{
+    var funcionarios = funcionarioController.ListarTodosFuncionarios();
+    foreach (var item in funcionarios)
+    {
+        Console.WriteLine(item);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+/*try
+{
+    Console.WriteLine("Funcionario:");
+    Console.WriteLine(funcionarioController.BuscarFuncionarioPorCPF("12345678910"));
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}*/
+
+/*try
+{
+    funcionarioController.AtualizarSalario("12345678910", 2000.00M);
+    Console.WriteLine("Funcionário atualizado com sucesso!");
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.Message);
+}*/
+
+try
+{
+    funcionarioController.DeletarFuncionario("12345678910");
+    Console.WriteLine("Deletado com sucesso");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}

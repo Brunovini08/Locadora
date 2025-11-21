@@ -26,10 +26,8 @@ namespace Locadora.Controller
                     command.Parameters.AddWithValue("@Nome", categoria.Nome);
                     command.Parameters.AddWithValue("@Descricao", categoria.Descricao ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Diaria", categoria.Diaria);
-                    int categoriaID = Convert.ToInt32(command.ExecuteScalar());
-                    categoria.setCategoriaID(categoriaID);
-
-                    var documentoController = new DocumentoController();
+                    int categoriaId = Convert.ToInt32(command.ExecuteScalar());
+                    categoria.setCategoriaID(categoriaId);
 
                     transaction.Commit();
                 }
@@ -82,7 +80,7 @@ namespace Locadora.Controller
 
         }
 
-        public Categoria BuscarCategoriaNome(string nome)
+        public Categoria? BuscarCategoriaNome(string nome)
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
 
@@ -105,6 +103,39 @@ namespace Locadora.Controller
                     categoria.setCategoriaID(Convert.ToInt32(reader["CategoriaID"]));
                 }
                 return categoria;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar categoria por nome: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar categoria por nome: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        
+        public string BuscarCategoriaNomePorID(int id)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+
+            connection.Open();
+            try
+            {
+                SqlCommand command = new SqlCommand(Categoria.SELECCATEGORIANOMEID, connection);
+
+                command.Parameters.AddWithValue("@idCategoria", id);
+
+                SqlDataReader reader = command.ExecuteReader();
+                string nomeCategoria = String.Empty;
+                if (reader.Read())
+                {
+                    nomeCategoria = reader["Nome"].ToString();
+                }
+                return nomeCategoria;
             }
             catch (SqlException ex)
             {

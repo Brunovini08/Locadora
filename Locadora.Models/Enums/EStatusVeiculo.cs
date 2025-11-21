@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Locadora.Models.Enums
 {
-    public class EStatusVeiculo
+    public enum EStatusVeiculo
     {
+        ALUGADO,
+        DISPONIVEL,
+        BLOQUEADO
     }
 }

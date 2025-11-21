@@ -16,13 +16,14 @@ namespace Locadora.Models
         public static string INSERTCATEGORIA = @"INSERT INTO tblCategorias VALUES (@Nome, @Descricao, @Diaria)";
 
         public readonly static string SELECTALLCATEGORIAS = "SELECT * FROM tblCategorias";
+        public readonly static string SELECTCATEGORIANOME = @"SELECT * FROM tblCategorias WHERE Nome = @Nome";
+        public readonly static string SELECCATEGORIANOMEID = @"SELECT Nome FROM tblCategorias WHERE CategoriaID = @idCategoria";
 
         public readonly static string UPDATEDIARIACATEGORIA = "UPDATE tblCategorias SET Diaria = @Diaria WHERE CategoriaID = @IdCategoria";
         public readonly static string UPDATEDESCRICAOCATEGORIA = "UPDATE tblCategorias SET Descricao = @Descricao WHERE CategoriaID = @IdCategoria";
-        public readonly static string SELECTCATEGORIANOME = @"SELECT * FROM tblCategorias WHERE Nome = @Nome";
         public readonly static string DELETECATEGORIA = @"DELETE FROM tblCategorias WHERE CategoriaID = @IdCategoria";
 
-        public Categoria(string nome, string descricao, double diaria)
+        public Categoria(string? nome, string? descricao, double diaria)
         {
             Nome = nome;
             Descricao = descricao;

@@ -1,6 +1,6 @@
 namespace Utils.Inputs;
 
-public class Input
+public class InputHelper
 {
       public static string LerString(string mensagem, string mensagemErro, string valorPadrao = "")
         {

@@ -11,43 +11,55 @@ namespace Locadora.Controller
 {
     public class DocumentoController
     {
-        public void AdicionarDocumento(Documento documento, SqlTransaction transaction, SqlConnection connection)
+       public void AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
         {
-                try
-                {
-                    SqlCommand command = new SqlCommand(Documento.INSERTDOCUMENTO, connection, transaction);
 
-                    command.Parameters.AddWithValue("@ClienteID", documento.ClienteID);
-                    command.Parameters.AddWithValue("@TipoDocumento", documento.TipoDocumento);
-                    command.Parameters.AddWithValue("@Numero", documento.Numero);
-                    command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
-                    command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
+            try 
+            {
+                SqlCommand command = new SqlCommand(Documento.INSERTDOCUMENTO, connection, transaction);
 
-                    command.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Erro ao adicionar Documento: " + ex.Message);
-                }
+                command.Parameters.AddWithValue("@ClienteId", documento.ClienteId);
+                command.Parameters.AddWithValue("@TipoDocumento", documento.TipoDocumento);
+                command.Parameters.AddWithValue("@Numero", documento.Numero);
+                command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
+                command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
+
+                command.ExecuteNonQuery();
+            }
+            catch(SqlException ex)
+            {
+                transaction.Rollback();
+                throw new Exception("Erro ao adicionar documento: " + ex.Message);
+            }
+            catch (Exception ex) 
+            {
+                transaction.Rollback();
+                throw new Exception("Erro inesperado ao adicionar documento: " + ex.Message);
+            }
         }
-
-        public void AtualizarDocumento(Documento documento, SqlTransaction transaction, SqlConnection connection)
+        public void AtualizarDocumentos(Documento documento, SqlConnection connection, SqlTransaction transaction)
         {
             try
             {
                 SqlCommand command = new SqlCommand(Documento.UPDATEDOCUMENTO, connection, transaction);
 
-                command.Parameters.AddWithValue("@IdCliente", documento.ClienteID);
+                command.Parameters.AddWithValue("@IdCliente", documento.ClienteId);
                 command.Parameters.AddWithValue("@TipoDocumento", documento.TipoDocumento);
                 command.Parameters.AddWithValue("@Numero", documento.Numero);
                 command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
                 command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
+
                 command.ExecuteNonQuery();
+            }
+            catch (SqlException ex)
+            {
+                transaction.Rollback();
+                throw new Exception("Erro ao alterar documento: " + ex.Message);
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao alterar Documento: " + ex.Message);
+                transaction.Rollback();
+                throw new Exception("Erro inesperado ao alterar documento: " + ex.Message);
             }
         }
     }

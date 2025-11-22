@@ -8,49 +8,59 @@ namespace Locadora.Models
 {
     public class Categoria
     {
+        public static readonly string INSERTCATEGORIA = @"INSERT INTO tblCategorias(Nome, Descricao, Diaria) 
+                                                        VALUES(@Nome, @Descricao, @Diaria)";
+
+        public static readonly string SELECTCATEGORIAS = @"SELECT Nome, Descricao, Diaria 
+                                                        FROM tblCategorias";
+
+        public static readonly string UPDATECATEGORIA = @"UPDATE tblCategorias
+                                                        SET Descricao = @Descricao,
+                                                        Diaria = @Diaria
+                                                        WHERE Nome = @Nome";
+
+        public static readonly string SELECTCATEGORIAPORNOME = @"SELECT Nome, Descricao, Diaria 
+                                                                FROM tblCategorias
+                                                                WHERE Nome = @Nome";
+
+        public static readonly string SELECTCATEGORIAPORID = @"SELECT Nome
+                                                                FROM tblCategorias
+                                                                WHERE CategoriaID = @CategoriaID";
+
+        public static readonly string DELETECATEGORIA = @"DELETE FROM tblCategorias
+                                                          WHERE Nome = @Nome";
+
+        public static readonly string INSERTCATEGORIAPROCEDURE = @"EXEC sp_AdicionarCategoria @Nome, @Descricao, @Diaria;";
+
         public int CategoriaID { get; private set; }
         public string Nome { get; private set; }
-        public string Descricao { get; private set; }
-        public double Diaria { get; private set; }
+        public string? Descricao { get; private set; }
+        public decimal Diaria { get; private set; }
 
-        public static string INSERTCATEGORIA = @"INSERT INTO tblCategorias VALUES (@Nome, @Descricao, @Diaria)";
-
-        public readonly static string SELECTALLCATEGORIAS = "SELECT * FROM tblCategorias";
-        public readonly static string SELECTCATEGORIANOME = @"SELECT * FROM tblCategorias WHERE Nome = @Nome";
-        public readonly static string SELECCATEGORIANOMEID = @"SELECT Nome FROM tblCategorias WHERE CategoriaID = @idCategoria";
-
-        public readonly static string UPDATEDIARIACATEGORIA = "UPDATE tblCategorias SET Diaria = @Diaria WHERE CategoriaID = @IdCategoria";
-        public readonly static string UPDATEDESCRICAOCATEGORIA = "UPDATE tblCategorias SET Descricao = @Descricao WHERE CategoriaID = @IdCategoria";
-        public readonly static string DELETECATEGORIA = @"DELETE FROM tblCategorias WHERE CategoriaID = @IdCategoria";
-
-        public Categoria(string? nome, string? descricao, double diaria)
+        public Categoria(string nome, decimal diaria)
         {
             Nome = nome;
-            Descricao = descricao;
             Diaria = diaria;
         }
+        public Categoria(string nome, decimal diaria, string? descricao) : this (nome, diaria)
+        {
+            Descricao = descricao;
+        }
 
-        public void setCategoriaID(int categoriaID)
+        public void SetCategoriaID(int categoriaID)
         {
             CategoriaID = categoriaID;
         }
 
-        public void setDiaria(double diaria)
+        public void SetNomeCategoria(string nome) 
         {
-            Diaria = diaria;
+            Nome = nome;
         }
 
-        public void setDescricao(string descricao)
+        public override string? ToString()
         {
-            Descricao = descricao;
+            return $"Categoria: {Nome}\nDescrição: {Descricao}\nDiária: {Diaria:C}\n";
         }
 
-        public override string ToString()
-        {
-            return
-                $"\nNome: {Nome}" +
-                $"\nDescrição: {(Descricao != null ? Descricao : "Não tem descrição")}" +
-                $"\nDiária: {Diaria}";
-        }
     }
 }

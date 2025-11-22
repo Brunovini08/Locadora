@@ -12,6 +12,7 @@ public class Funcionario
 
     public static readonly string INSERTFUNCIONARIO = @"INSERT INTO tblFuncionarios VALUES(@Nome, @CPF, @Email, @Salario);";
     public static readonly string SELECTFUNCIONARIOPORCPF = @"SELECT * FROM tblFuncionarios WHERE CPF = @CPF";
+    public static readonly string SELECTFUNCIONARIOPORID = @"SELECT Nome FROM tblFuncionarios WHERE FuncionarioID = @IdFuncionario";
 
     public static readonly string UPDATEFUNCIONARIOSALARIO =
         @"UPDATE tblFuncionarios SET Salario  = @Salario WHERE FuncionarioID = @IdFuncionario";

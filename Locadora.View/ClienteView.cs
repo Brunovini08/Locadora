@@ -36,7 +36,7 @@ public class ClienteView
                 Console.WriteLine($"Nome: {c.Nome}");
                 Console.WriteLine($"Email: {c.Email}");
                 Console.WriteLine($"Telefone: {c.Telefone}");
-                Console.WriteLine($"Documento: {c.DocumentoCliente.TipoDocumento} - {c.DocumentoCliente.Numero}");
+                Console.WriteLine($"Documento: {c.Documento.TipoDocumento} - {c.Documento.Numero}");
             }
         }
         public void BuscarPorEmail()
@@ -45,7 +45,7 @@ public class ClienteView
 
             string email = InputHelper.LerString("Email: ", "Email inválido!");
 
-            var cliente = controller.BuscarClienteEmail(email);
+            var cliente = controller.BuscaClientePorEmail(email);
 
             if (cliente is null)
                 Console.WriteLine("Cliente não encontrado!");

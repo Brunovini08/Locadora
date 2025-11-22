@@ -64,7 +64,7 @@ using Utils.Databases;
 
 #region CATEGORIA E VEICULO
 
-Categoria categoria = new Categoria("Carro de Luxo", "Carros CAROS", 100.00);
+Categoria categoria = new Categoria("Carro de Luxo", 100.00M,"Carros CAROS");
 CategoriaController categoriaController = new CategoriaController();
 
 

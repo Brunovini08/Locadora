@@ -111,6 +111,40 @@ public class FuncionarioController : IFuncionarioController
             connection.Close();
         }
     }
+    
+    public string BuscarNomeFuncionarioPorID(int id)
+    {
+        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+
+        connection.Open();
+        try
+        {
+            SqlCommand command = new SqlCommand(Funcionario.SELECTFUNCIONARIOPORCPF, connection);
+
+            command.Parameters.AddWithValue("@IdFuncionario", id);
+
+            SqlDataReader reader = command.ExecuteReader();
+            string nome = String.Empty;
+            if (reader.Read())
+            {
+                nome = reader["Nome"].ToString();
+            }
+
+            return nome;
+        }
+        catch (SqlException ex)
+        {
+            throw new Exception("Erro ao buscar funcionario por cpf: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erro inesperado ao buscar funcionario por cpf: " + ex.Message);
+        }
+        finally
+        {
+            connection.Close();
+        }
+    }
 
     public void AtualizarSalario(string cpf, decimal salario)
     {

@@ -9,155 +9,282 @@ namespace Locadora.Controller;
 public class VeiculoController : IVeiculoController
 {
     public void AdicionarVeiculo(Veiculo veiculo)
-    {
-        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
-        connection.Open();
-
-        using (SqlTransaction transaction = connection.BeginTransaction())
         {
-            try
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction())
             {
-                SqlCommand command = new SqlCommand(Veiculo.INSERTVEICULO, connection, transaction);
-                command.Parameters.AddWithValue("@CategoriaID", veiculo.CategoriaID);
-                command.Parameters.AddWithValue("@Placa", veiculo.Placa);
-                command.Parameters.AddWithValue("@Marca", veiculo.Marca);
-                command.Parameters.AddWithValue("@Modelo", veiculo.Modelo);
-                command.Parameters.AddWithValue("@Ano", veiculo.Ano);
-                command.Parameters.AddWithValue("@StatusVeiculo", veiculo.StatusVeiculo);
-
-                command.ExecuteNonQuery();
-
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Erro ao adicionar veículo no banco de dados: " + ex.Message);
-            }
-        }
-    }
-    public List<Veiculo> ListarTodosVeiculos()
-    {
-        var veiculos = new List<Veiculo>();
-        var categoriaController = new CategoriaController();
-        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
-
-        connection.Open();
-
-        using (SqlCommand command = new SqlCommand(Veiculo.SELECTALLVEICULOS, connection))
-        {
-            try
-            {
-                using (SqlDataReader reader = command.ExecuteReader())
+                try
                 {
-                    while (reader.Read())
-                    {
-                        Veiculo veiculo = new Veiculo(
-                            reader.GetInt32(1),
-                            reader.GetString(2),
-                            reader.GetString(3),
-                            reader.GetString(4),
-                            reader.GetInt32(5),
-                            reader.GetString(6)
-                        );
-                        veiculo.setVeiculoID(reader.GetInt32(0));
-                        veiculo.setNomeCategoria(
-                                categoriaController.BuscarCategoriaNomePorID(reader.GetInt32(1))
-                            );
-                        veiculos.Add(veiculo);  
-                    }
+                    SqlCommand command = new SqlCommand(Veiculo.INSERTVEICULO, connection, transaction);
+                    command.Parameters.AddWithValue("@CategoriaID", veiculo.CategoriaID);
+                    command.Parameters.AddWithValue("@Placa", veiculo.Placa);
+                    command.Parameters.AddWithValue("@Marca", veiculo.Marca);
+                    command.Parameters.AddWithValue("@Modelo", veiculo.Modelo);
+                    command.Parameters.AddWithValue("@Ano", veiculo.Ano);
+                    command.Parameters.AddWithValue("@StatusVeiculo", veiculo.StatusVeiculo);
 
-                    return veiculos;
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao adicionar veículo no banco de dados: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro inesperado ao adicionar veículo: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Erro ao listar veiculos: " + ex.Message);
-            }
         }
-    }
-    public Veiculo BuscarVeiculoPlaca(string placa)
-    {
-        var categoriaController = new CategoriaController();
-        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
-
-        connection.Open();
-
-        using (SqlCommand command = new SqlCommand(Veiculo.SELECTVEICULOBYPLACA, connection))
+        public List<Veiculo> ListarTodosVeiculos()
         {
+            var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            List<Veiculo> veiculos = new List<Veiculo>();
+
+            connection.Open();
+
             try
             {
-                Veiculo veiculo = null;
+
+                var command = new SqlCommand(Veiculo.SELECTVEICULOS, connection);
+                var reader = command.ExecuteReader();
+                CategoriaController categoriaController = new CategoriaController();
+
+                while (reader.Read())
+                {
+                    string categoria = categoriaController.BuscarCategoriaPorID(reader.GetInt32(0));
+
+                    var veiculo = new Veiculo(
+                        reader.GetInt32(0),
+                        reader.GetString(2),
+                        reader.GetString(3),
+                        reader.GetString(4),
+                        reader.GetInt32(5),
+                        reader.GetString(6)
+                    );
+                    veiculo.SetNomeCategoria(categoria);
+
+                    veiculos.Add(veiculo);
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao listar veículos: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao listar veículos: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return veiculos;
+        }
+        public Veiculo BuscarVeiculoPlaca(string placa)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            try
+            {
+                var categoriaController = new CategoriaController();
+                var command = new SqlCommand(Veiculo.SELECTVEICULOSPORPLACA, connection);
                 command.Parameters.AddWithValue("@Placa", placa);
-                using (SqlDataReader reader = command.ExecuteReader())
+
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        veiculo = new Veiculo(
-                            reader.GetInt32(1),
-                            reader.GetString(2),
-                            reader.GetString(3),
-                            reader.GetString(4),
-                            reader.GetInt32(5),
-                            reader.GetString(6)
-                        );
-                        veiculo.setVeiculoID(reader.GetInt32(0));
-                        veiculo.setNomeCategoria(
-                            categoriaController.BuscarCategoriaNomePorID(reader.GetInt32(1))
-                        );
-                    }
-                    return veiculo ?? throw new Exception($"Não existe veículo com a placa -> {placa}");
+                    Veiculo veiculo = new Veiculo(
+                        reader.GetInt32(0),
+                        reader.GetString(1),
+                        reader.GetString(2),
+                        reader.GetString(3),
+                        reader.GetInt32(4),
+                        reader.GetString(5)
+                    );
+                    veiculo.SetNomeCategoria(
+                        categoriaController.BuscarCategoriaPorID
+                        (veiculo.CategoriaID)
+                    );
+                    return veiculo;
                 }
             }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar veículo: " + ex.Message);
+            }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao listar veiculos: " + ex.Message);
+                throw new Exception("Erro inesperado ao buscar veículo: " + ex.Message);
             }
+            finally
+            {
+                connection.Close();
+            }
+            return null;
         }
-    }
-    public void AtualizarStatusVeiculo(string placa, string statusVeiculo)
-    {
-        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
-
-        connection.Open();
-
-        using (SqlCommand command = new SqlCommand(Veiculo.UPDATESTATUSVEICULO, connection))
+        public decimal BuscarDiariaPorVeiculoID(int veiculoID)
         {
-            Veiculo veiculo = BuscarVeiculoPlaca(placa);
-            if(veiculo is null) 
-                throw new Exception($"O veículo com a placa -> {placa}, não existe");
-            veiculo.setStatusVeiculo(statusVeiculo.ToString());
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
             try
             {
-                command.Parameters.AddWithValue("@StatusVeiculo", statusVeiculo);
-                command.Parameters.AddWithValue("@IdVeiculo", veiculo.VeiculoID);
-                command.ExecuteNonQuery();
+                var command = new SqlCommand(Veiculo.SELECTDIARIAPORVEICULO, connection);
+                command.Parameters.AddWithValue("@VeiculoID", veiculoID);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetDecimal(0);
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar diária do veículo: " + ex.Message);
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao atualizar veiculo: " + ex.Message);
+                throw new Exception("Erro inesperado ao buscar diária do veículo: " + ex.Message);
             }
+            finally
+            {
+                connection.Close();
+            }
+            return 0;
         }
-    }
-    public void DeletarVeiculo(string placa)
-    {
-        SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
-
-        connection.Open();
-
-        using (SqlCommand command = new SqlCommand(Veiculo.DELETEVEICULO, connection))
+        public string BuscarStatusPorVeiculoID(int veiculoID)
         {
-            Veiculo veiculo = BuscarVeiculoPlaca(placa);
-            if(veiculo is null) 
-                throw new Exception($"O veículo com a placa -> {placa}, não existe");
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
             try
             {
-                command.Parameters.AddWithValue("@idVeiculo", veiculo.VeiculoID);
-                command.ExecuteNonQuery();
+                var command = new SqlCommand(Veiculo.SELECTVEICULOPORID, connection);
+                command.Parameters.AddWithValue("@VeiculoID", veiculoID);
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetString(2);
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar status do veículo: " + ex.Message);
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao deletar veiculo: " + ex.Message);
+                throw new Exception("Erro inesperado ao buscar status do veículo: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return null;
+        }
+        public (string, string, string) BuscarMarcaModeloPorVeiculoID(int veiculoID)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+            try
+            {
+                var command = new SqlCommand(Veiculo.SELECTVEICULOPORID, connection);
+                command.Parameters.AddWithValue("@VeiculoID", veiculoID);
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return (reader.GetString(0), reader.GetString(1), reader.GetString(3));
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar marca e modelo do veículo: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar marca e modelo do veículo: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return (null, null, null);
+        }
+        public void AtualizarStatusVeiculo(string statusVeiculo, string placa)
+        {
+            var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            using (SqlTransaction transaction = connection.BeginTransaction())
+            {
+                try 
+                {
+                    var veiculoEncontrado = BuscarVeiculoPlaca(placa) ??
+                        throw new Exception("Veículo não encontrado para atualizar status.");
+
+                    var command = new SqlCommand(Veiculo.UPDATEVEICULO, connection, transaction);
+                    command.Parameters.AddWithValue("@StatusVeiculo", statusVeiculo);
+                    command.Parameters.AddWithValue("@Placa", veiculoEncontrado.Placa);
+
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar status do veículo no banco de dados: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro inesperado ao atualizar status do veículo: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
             }
         }
-    }
+        public void DeletarVeiculo(string placa)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    var veiculoEncontrado = BuscarVeiculoPlaca(placa) ??
+                        throw new Exception("Veículo não encontrado para deletar.");
+
+                    var command = new SqlCommand(Veiculo.DELETEVEICULO, connection, transaction);
+                    command.Parameters.AddWithValue("@Placa", veiculoEncontrado.Placa);
+
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao deletar veículo no banco de dados: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro inesperado ao deletar veículo: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
 }

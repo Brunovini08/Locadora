@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Locadora.Controller.Interfaces;
 using Utils.Databases;
 
 namespace Locadora.Controller
 {
-    public class CategoriaController
+    public class CategoriaController : ICategoriaController
     {
         public void AdicionarCategoria(Categoria categoria) 
         {
@@ -100,6 +101,7 @@ namespace Locadora.Controller
                     string nomeCategoria = reader["Nome"].ToString();
                     return nomeCategoria;
                 }
+            
             }
             catch (SqlException ex)
             {

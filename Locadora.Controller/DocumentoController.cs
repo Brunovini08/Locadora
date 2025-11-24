@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Locadora.Controller.Interfaces;
 using Utils.Databases;
 
 namespace Locadora.Controller
 {
-    public class DocumentoController
+    public class DocumentoController : IDocumentoController
     {
-       public void AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
+        public void AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
         {
 
             try 
@@ -62,5 +63,6 @@ namespace Locadora.Controller
                 throw new Exception("Erro inesperado ao alterar documento: " + ex.Message);
             }
         }
+
     }
 }

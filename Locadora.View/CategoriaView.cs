@@ -121,8 +121,12 @@ public class CategoriaView
                         {
                             Console.WriteLine("\n===== Nenhuma Categoria Encontrada =====\n");
                         }
-                        Console.WriteLine("\n===== Categoria Encontrada =====\n");
-                        Console.WriteLine(categoriaLida);
+                        else
+                        {
+                            Console.WriteLine("\n===== Categoria Encontrada =====\n");
+                            Console.WriteLine(categoriaLida);
+                        }
+
                         Console.ReadKey();
                     }
                     catch (SqlException ex)

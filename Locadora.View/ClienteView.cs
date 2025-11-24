@@ -57,9 +57,9 @@ public class ClienteView
                         InputHelper.LerString("Digite o tipo de documento: ", "Informe um tipo válido!");
                     string numero = InputHelper.LerString("Digite o numero do Documento: ", "Número inválido!");
                     DateOnly emissao =
-                        InputHelper.LerData("Digite a Data de Emissão (dd/MM/yyyy): ", "Data inválida!");
+                        InputHelper.LerDataEmissao("Digite a Data de Emissão (dd/MM/yyyy): ", "Data inválida!");
                     DateOnly validade =
-                        InputHelper.LerData("Digite a data de Validade (dd/MM/yyyy): ", "Data inválida!");
+                        InputHelper.LerDataValidade("Digite a data de Validade (dd/MM/yyyy): ", "Data inválida!", emissao);
 
                     Documento documento = new Documento(tipoDoc, numero, emissao, validade);
                     try
@@ -90,13 +90,6 @@ public class ClienteView
                         var listaClientes = new List<Cliente>();
 
                         listaClientes = clienteController.ListarClientes();
-                        //Adicionando verificao de retorno
-                        if (listaClientes is null)
-                        {
-                            Console.WriteLine("=============================");
-                            Console.WriteLine("NENHUM CLIENTE REGISTRADO");
-                            Console.WriteLine("=============================\n");
-                        }
 
                         foreach (var item in listaClientes)
                         {
@@ -127,17 +120,11 @@ public class ClienteView
 
 
                         Cliente clienteLido = clienteController.BuscaClientePorEmail(emailLido);
-                        if (clienteLido is null)
-                        {
-                            Console.WriteLine("===== Cliente não encontrado =====");
-                        }
-                        else
-                        {
-                            Console.WriteLine("\n===== Cliente Encontrado =====\n");
-                            Console.WriteLine(clienteLido);
-                        }
 
-                            Console.ReadKey();
+                        Console.WriteLine("\n===== Cliente Encontrado =====\n");
+                        Console.WriteLine(clienteLido);
+
+                        Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
@@ -169,11 +156,11 @@ public class ClienteView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao atualizar telefone do cliente: " + ex.Message);
+                        throw new Exception("Erro ao atualizar telefone do cliente. " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao atualizar telefone do cliente: " + ex.Message);
+                        throw new Exception("Erro ao atualizar telefone do cliente. " + ex.Message);
                     }
                     break;
 
@@ -212,11 +199,11 @@ public class ClienteView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao atualizar documento: " + ex.Message);
+                        throw new Exception("Erro ao atualizar documento. " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao atualizar documento: " + ex.Message);
+                        throw new Exception("Erro ao atualizar documento. " + ex.Message);
                     }
                     break;
 

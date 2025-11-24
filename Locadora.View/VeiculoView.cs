@@ -56,7 +56,7 @@ public class VeiculoView
                     string statusVeiculo =
                         InputHelper.LerString("Digite o status do veículo: ", "Status do veículo inválido");
 
-                    Veiculo veiculo = new Veiculo(categoriaID, placa, marca, modelo, ano, statusVeiculo);
+                    Veiculo veiculo = new Veiculo(categoriaID, placa, marca, modelo, ano);
                     try
                     {
                         veiculoController.AdicionarVeiculo(veiculo);

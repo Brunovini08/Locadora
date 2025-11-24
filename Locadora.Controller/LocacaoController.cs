@@ -8,7 +8,7 @@ namespace Locadora.Controller;
 
 public class LocacaoController : ILocacaoController
 {
-    public void AdicionarLocacao(Locacao locacao, string cpf)
+    public void AdicionarLocacao(string email, string placa, int diasLocacao, string cpf)
     {
         var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         connection.Open();
@@ -18,17 +18,31 @@ public class LocacaoController : ILocacaoController
             LocacaoFuncionarioController locacaoFuncionarioController = new LocacaoFuncionarioController();
             VeiculoController veiculoController = new VeiculoController();
             FuncionarioController funcionarioController = new FuncionarioController();
+            ClienteController clienteController = new ClienteController();
 
-            var diaria = veiculoController.BuscarDiariaPorVeiculoID(locacao.VeiculoID);
+
+            var Veiculo = veiculoController.BuscarVeiculoPlaca(placa) ??
+                throw new Exception("Veículo não encontrado.");
+
+            if (Veiculo.StatusVeiculo != "Disponível")
+                throw new Exception("Veículo não está disponível para locação.");
+
+            var cliente = clienteController.BuscaClientePorEmail(email) ??
+                throw new Exception("Cliente não encontrado.");
+
+            var diaria = veiculoController.BuscarDiariaPorPlaca(placa);
             if (diaria == 0)
                 throw new Exception("Diária do veículo não encontrada.");
 
-            var statusVeiculo = veiculoController.BuscarStatusPorVeiculoID(locacao.VeiculoID);
-            if (statusVeiculo != "Disponível")
-                throw new Exception("Veículo não está disponível para locação.");
-
             var funcionario = funcionarioController.BuscarFuncionarioPorCPF(cpf) ??
                 throw new Exception("Funcionário não encontrado.");
+
+            Locacao locacao = new Locacao(
+                cliente.ClienteId,
+                Veiculo.VeiculoID,
+                DateTime.Now,
+                diasLocacao
+            );
 
             var dias = (locacao.DataDevolucaoPrevista - locacao.DataLocacao).TotalDays;
             var total = diaria * (decimal)dias;
@@ -49,9 +63,7 @@ public class LocacaoController : ILocacaoController
                 int locacaoID = Convert.ToInt32(command.ExecuteScalar());
                 transaction.Commit();
 
-                var (marca, modelo, placaVeiculo) = veiculoController.BuscarMarcaModeloPorVeiculoID(locacao.VeiculoID);
-
-                veiculoController.AtualizarStatusVeiculo(EStatusVeiculo.Alugado.ToString(), placaVeiculo);
+                veiculoController.AtualizarStatusVeiculo(EStatusVeiculo.Alugado.ToString(), placa);
 
                 int funcionarioID = funcionario.FuncionarioID;
                 locacaoFuncionarioController.Adicionar(locacaoID, funcionarioID);
@@ -90,6 +102,7 @@ public class LocacaoController : ILocacaoController
 
             while (reader.Read())
             {
+
                 var diasLocacao = (int)(reader.GetDateTime(8) - reader.GetDateTime(7)).TotalDays;
                 Locacao locacao = new Locacao(
                     reader.GetInt32(4),
@@ -98,10 +111,12 @@ public class LocacaoController : ILocacaoController
                     diasLocacao
                 );
 
+                locacao.SetLocacaoID(reader.GetInt32(6));
                 if (locacoes.Any(l => l.LocacaoID == locacao.LocacaoID))
                 {
                     continue;
                 }
+
 
                 var listaFuncionario = locacaoFuncionarioController.BuscarFuncionariosPorLocacao(reader.GetInt32(6));
                 string funcionario1 = listaFuncionario[0];
@@ -245,7 +260,7 @@ public class LocacaoController : ILocacaoController
                         diasLocados = (int)Math.Ceiling((locacaoEncontrada.DataDevolucaoReal.Value - locacaoEncontrada.DataLocacao).TotalDays);
                         locacaoEncontrada.SetValorTotal(locacaoEncontrada.ValorDiaria * diasLocados);
                         locacaoEncontrada.SetMulta(reader.GetDecimal(8));
-                        locacaoEncontrada.SetStatus(EStatusLocacao.Finalizada);
+                        locacaoEncontrada.SetStatus(EStatusLocacao.Concluida);
                     }
                 }
 

@@ -26,7 +26,7 @@ namespace Locadora.Controller
                     documento.SetClienteId(clientId);
 
                     var documentoController = new DocumentoController();
-                   
+
                     cliente.setClienteId(clientId);
                     documentoController.AdicionarDocumento(documento, connection, transaction);
 
@@ -99,7 +99,7 @@ namespace Locadora.Controller
                 }
             }
         }
-        public string BuscarNomeClientePorID(int clienteID) 
+        public string BuscarNomeClientePorID(int clienteID)
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
@@ -178,7 +178,7 @@ namespace Locadora.Controller
         {
             SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
-            
+
 
             using (SqlTransaction transaction = connection.BeginTransaction())
             {
@@ -205,7 +205,7 @@ namespace Locadora.Controller
                     transaction.Rollback();
                     throw new Exception("Erro inesperado ao atualizar cliente: " + ex.Message);
                 }
-                finally                 
+                finally
                 {
                     connection.Close();
                 }
@@ -257,12 +257,17 @@ namespace Locadora.Controller
             if (clienteEncontrado is null)
                 throw new Exception("Não existe cliente cadastrado com este email");
 
+            if (ClientePossuiLocacaoAtiva(clienteEncontrado.ClienteId))
+            {
+                throw new Exception("Não é possível remover este cliente: ele possui locações ativas.");
+            }
+
             var connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
 
             using (SqlTransaction transaction = connection.BeginTransaction())
             {
-                try 
+                try
                 {
                     SqlCommand command = new SqlCommand(Cliente.DELETECLIENTE, connection, transaction);
                     command.Parameters.AddWithValue("@IDCliente", clienteEncontrado.ClienteId);
@@ -285,6 +290,28 @@ namespace Locadora.Controller
                 }
             }
 
+        }
+        public bool ClientePossuiLocacaoAtiva(int clienteId)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            try
+            {
+                SqlCommand command = new SqlCommand(Cliente.SELECTLOCACOESATIVASDOCLIENTE, connection);
+                command.Parameters.AddWithValue("@ClienteID", clienteId);
+
+                int locacoesAtivas = Convert.ToInt32(command.ExecuteScalar());
+                return locacoesAtivas > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao verificar locações ativas do cliente: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
     }
 }

@@ -11,4 +11,5 @@ public interface IClienteController
     public void AtualizarTelefoneCliente(string telefone, string email);
     public void AtualizarDocumentoCliente(string email, Documento documento);
     public void DeletarCliente(string email);
+    public bool ClientePossuiLocacaoAtiva(int clienteId);
 }

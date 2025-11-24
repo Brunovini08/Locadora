@@ -2,9 +2,8 @@
 {
     public class Cliente
     {
-
-         public static readonly string INSERTCLIENTE = @"INSERT INTO tblClientes 
-                                                        VALUES(@Nome, @Email, @Telefone)" 
+        public static readonly string INSERTCLIENTE = @"INSERT INTO tblClientes 
+                                                        VALUES(@Nome, @Email, @Telefone)"
                                                         + "SELECT SCOPE_IDENTITY()";
 
         public static readonly string SELECTALLCLIENTES = @"SELECT c.Nome, c.Email, c.Telefone,
@@ -31,6 +30,8 @@
         public static readonly string DELETECLIENTE = @"DELETE FROM tblClientes
                                                        WHERE ClienteID = @IDCliente";
 
+        public static readonly string SELECTLOCACOESATIVASDOCLIENTE = @"SELECT COUNT(*) FROM tblLocacoes WHERE ClienteID = @ClienteID AND Status = 'Ativa'";
+
         public int ClienteId { get; private set; }
         public string Nome { get; private set; }
         public string Email { get; private set; }
@@ -48,12 +49,12 @@
             Telefone = telefone;
         }
 
-        public void setClienteId(int ClientId) 
+        public void setClienteId(int ClientId)
         {
             ClienteId = ClientId;
         }
-        public void setTelefone(string telefone) 
-        { 
+        public void setTelefone(string telefone)
+        {
             Telefone = telefone;
         }
 
@@ -66,6 +67,5 @@
         {
             return $"Nome: {Nome} \nEmail: {Email} \nTelefone: {(Telefone == string.Empty ? "Sem Telefone" : Telefone)}\n{Documento}";
         }
-
     }
 }

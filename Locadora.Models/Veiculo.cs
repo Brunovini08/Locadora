@@ -9,7 +9,6 @@ namespace Locadora.Models
 {
     public class Veiculo
     {
-
         public static readonly string INSERTVEICULO = @"INSERT INTO tblVeiculos(CategoriaID, Placa, Marca, Modelo, Ano, StatusVeiculo) 
                                                         VALUES(@CategoriaID, @Placa, @Marca, @Modelo, @Ano, @StatusVeiculo)";
 
@@ -18,7 +17,7 @@ namespace Locadora.Models
                                                         JOIN tblCategorias c
                                                         ON v.CategoriaID = c.CategoriaID";
 
-        public static readonly string SELECTVEICULOSPORPLACA = @"SELECT CategoriaID, Placa, Marca, Modelo, Ano, StatusVeiculo 
+        public static readonly string SELECTVEICULOSPORPLACA = @"SELECT CategoriaID, Placa, Marca, Modelo, Ano, StatusVeiculo, VeiculoID 
                                                              FROM tblVeiculos
                                                              WHERE Placa = @Placa";
 
@@ -26,7 +25,7 @@ namespace Locadora.Models
                                                                 FROM tblVeiculos v
                                                                 JOIN tblCategorias c
                                                                 ON v.CategoriaID = c.CategoriaID
-                                                                WHERE VeiculoID = @VeiculoID";
+                                                                WHERE Placa = @Placa";
 
         public static readonly string SELECTVEICULOPORID = @"SELECT Marca, Modelo, StatusVeiculo, Placa 
                                                             FROM tblVeiculos 
@@ -51,16 +50,20 @@ namespace Locadora.Models
         public string StatusVeiculo { get; private set; }
 
 
-        public Veiculo(int categoriaID, string placa, string marca, string modelo, int ano, string statusVeiculo)
+        public Veiculo(int categoriaID, string placa, string marca, string modelo, int ano)
         {
             CategoriaID = categoriaID;
             Placa = placa;
             Marca = marca;
             Modelo = modelo;
             Ano = ano;
-            StatusVeiculo = statusVeiculo;
+            StatusVeiculo = "Disponível";
         }
 
+        public void SetVeiculoID(int veiculoID)
+        {
+            VeiculoID = veiculoID;
+        }
         public void SetNomeCategoria(string nomecategoria)
         {
             NomeCategoria = nomecategoria;
@@ -73,7 +76,12 @@ namespace Locadora.Models
 
         public override string? ToString()
         {
-            return $"Placa: {Placa}\nMarca: {Marca}\nModelo: {Modelo}\nAno: {Ano}\nStatus: {StatusVeiculo}\nCategoria: {NomeCategoria}\n";
+            return $"Placa: {Placa}\n" +
+                $"Marca: {Marca}\n" +
+                $"Modelo: {Modelo}\n" +
+                $"Ano: {Ano}\n" +
+                $"Status: {StatusVeiculo}\n" +
+                $"Categoria: {NomeCategoria}\n";
         }
     }
 }

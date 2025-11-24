@@ -21,7 +21,8 @@ public class FuncionarioController : IFuncionarioController
                 command.Parameters.AddWithValue("@Nome", funcionario.Nome);
                 command.Parameters.AddWithValue("@CPF", funcionario.CPF);
                 command.Parameters.AddWithValue("@Email", funcionario.Email);
-                command.Parameters.AddWithValue("@Salario", funcionario.Salario);
+                command.Parameters.AddWithValue("@Salario",
+                     funcionario.Salario == null ? DBNull.Value : funcionario.Salario);
                 int funcionarioID = Convert.ToInt32(command.ExecuteScalar());
                 funcionario.setFuncionarioID(funcionarioID);
                 transaction.Commit();
@@ -37,7 +38,6 @@ public class FuncionarioController : IFuncionarioController
             }
         }
     }
-
     public List<Funcionario> ListarTodosFuncionarios()
     {
         var connectionString = ConnectionDB.GetConnectionString();
@@ -56,7 +56,7 @@ public class FuncionarioController : IFuncionarioController
                     reader["Nome"].ToString(),
                     reader["CPF"].ToString(),
                     reader["Email"].ToString(),
-                    (decimal)reader["Salario"]
+                    reader["Salario"] == DBNull.Value ? null : (decimal)reader["Salario"]
                 );
                 funcionario.setFuncionarioID((int)reader["FuncionarioID"]);
                 funcionarios.Add(funcionario);
@@ -73,7 +73,6 @@ public class FuncionarioController : IFuncionarioController
             connection.Close();
         }
     }
-
     public Funcionario BuscarFuncionarioPorCPF(string cpf)
     {
         SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -93,7 +92,7 @@ public class FuncionarioController : IFuncionarioController
                     reader["Nome"].ToString(),
                     reader["CPF"].ToString(),
                     reader["Email"].ToString(),
-                    (decimal)reader["Salario"]
+                      reader["Salario"] == DBNull.Value ? null : (decimal)reader["Salario"]
                 );
                 funcionario.setFuncionarioID(Convert.ToInt32(reader["FuncionarioID"]));
             }
@@ -176,7 +175,7 @@ public class FuncionarioController : IFuncionarioController
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro inesperado ao atualizar salário do funcionário: " + ex.Message);
+                throw new Exception("Erro inesperado ao atualizar salário do funcionário" + ex.Message);
             }
             finally
             {
@@ -184,7 +183,6 @@ public class FuncionarioController : IFuncionarioController
             }
         }
     }
-
     public void DeletarFuncionario(string cpf)
     {
         var connection = new SqlConnection(ConnectionDB.GetConnectionString());

@@ -37,6 +37,7 @@ public class FuncionarioController : IFuncionarioController
             }
         }
     }
+
     public List<Funcionario> ListarTodosFuncionarios()
     {
         var connectionString = ConnectionDB.GetConnectionString();
@@ -72,6 +73,7 @@ public class FuncionarioController : IFuncionarioController
             connection.Close();
         }
     }
+
     public Funcionario BuscarFuncionarioPorCPF(string cpf)
     {
         SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -111,7 +113,7 @@ public class FuncionarioController : IFuncionarioController
             connection.Close();
         }
     }
-    
+
     public string BuscarNomeFuncionarioPorID(int id)
     {
         SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -119,7 +121,7 @@ public class FuncionarioController : IFuncionarioController
         connection.Open();
         try
         {
-            SqlCommand command = new SqlCommand(Funcionario.SELECTFUNCIONARIOPORCPF, connection);
+            SqlCommand command = new SqlCommand(Funcionario.SELECTFUNCIONARIOPORID, connection);
 
             command.Parameters.AddWithValue("@IdFuncionario", id);
 
@@ -182,6 +184,7 @@ public class FuncionarioController : IFuncionarioController
             }
         }
     }
+
     public void DeletarFuncionario(string cpf)
     {
         var connection = new SqlConnection(ConnectionDB.GetConnectionString());

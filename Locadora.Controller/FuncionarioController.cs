@@ -176,7 +176,7 @@ public class FuncionarioController : IFuncionarioController
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro inesperado ao atualizar salário do funcionário" + ex.Message);
+                throw new Exception("Erro inesperado ao atualizar salário do funcionário: " + ex.Message);
             }
             finally
             {

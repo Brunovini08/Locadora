@@ -215,10 +215,6 @@ public class LocacaoController : ILocacaoController
 
         using (var transaction = connection.BeginTransaction())
         {
-            //var veiculo = veiculoController.BuscarVeiculoPlaca(placa);
-            //if (veiculo is null)
-            //    throw new Exception("Veículo não encontrado!");
-
             try
             {
 
@@ -249,7 +245,7 @@ public class LocacaoController : ILocacaoController
                         diasLocados = (int)Math.Ceiling((locacaoEncontrada.DataDevolucaoReal.Value - locacaoEncontrada.DataLocacao).TotalDays);
                         locacaoEncontrada.SetValorTotal(locacaoEncontrada.ValorDiaria * diasLocados);
                         locacaoEncontrada.SetMulta(reader.GetDecimal(8));
-                        locacaoEncontrada.SetStatus(EStatusLocacao.Concluida);
+                        locacaoEncontrada.SetStatus(EStatusLocacao.Finalizada);
                     }
                 }
 

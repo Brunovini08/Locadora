@@ -1,13 +1,14 @@
-﻿using Locadora.Models;
+﻿using Locadora.Controller.Interfaces;
+using Locadora.Models;
 using Microsoft.Data.SqlClient;
 using Utils.Databases;
 
 namespace Locadora.Controller
 {
-    public class ClienteController
+    public class ClienteController : IClienteController
     {
 
-          public void AdicionarCliente(Cliente cliente, Documento documento)
+        public void AdicionarCliente(Cliente cliente, Documento documento)
         {
             var connection = new SqlConnection(ConnectionDB.GetConnectionString());
             connection.Open();
@@ -232,6 +233,7 @@ namespace Locadora.Controller
                 }
                 catch (SqlException ex)
                 {
+
                     transaction.Rollback();
                     throw new Exception("Erro ao atualizar documento do cliente: " + ex.Message);
                 }

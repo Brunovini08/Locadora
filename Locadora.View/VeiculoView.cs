@@ -7,7 +7,7 @@ namespace Locadora.View;
 
 public class VeiculoView
 {
-     public static void ExibirMenuVeiculos()
+    public static void ExibirMenuVeiculos()
     {
         int op;
         bool convertido;
@@ -84,23 +84,32 @@ public class VeiculoView
                         var listaVeiculos = new List<Veiculo>();
 
                         listaVeiculos = veiculoController.ListarTodosVeiculos();
-
-                        foreach (var item in listaVeiculos)
+                        //Adicionando verificao de retorno
+                        if (listaVeiculos is null)
                         {
                             Console.WriteLine("=============================");
-                            Console.WriteLine(item);
+                            Console.WriteLine("NENHUM VEÍCULO REGISTRADO");
                             Console.WriteLine("=============================\n");
+                        }
+                        else
+                        {
+                            foreach (var item in listaVeiculos)
+                            {
+                                Console.WriteLine("=============================");
+                                Console.WriteLine(item);
+                                Console.WriteLine("=============================\n");
+                            }
                         }
 
                         Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao listar veículo. " + ex.Message);
+                        throw new Exception("Erro ao listar veículo: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao listar veículos. " + ex.Message);
+                        throw new Exception("Erro ao listar veículos: " + ex.Message);
                     }
 
                     break;
@@ -111,22 +120,28 @@ public class VeiculoView
                     try
                     {
                         string placaLida = InputHelper.LerString("Digite a placa do veículo: ", "Placa inválida");
-
+                        //Adicionando verificao de retorno
                         Veiculo veiculoLido = veiculoController.BuscarVeiculoPlaca(placaLida);
+                        if (veiculoLido is null)
+                        {
+                            Console.WriteLine("\n===== Nenhum Veículo Encontrado =====\n");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n===== Veículo Encontrado =====\n");
 
-                        Console.WriteLine("\n===== Veículo Encontrado =====\n");
-
-                        Console.WriteLine(veiculoLido);
+                            Console.WriteLine(veiculoLido);
+                        }
 
                         Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao buscar veículo. " + ex.Message);
+                        throw new Exception("Erro ao buscar veículo: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao buscar veículo. " + ex.Message);
+                        throw new Exception("Erro ao buscar veículo: " + ex.Message);
                     }
                     break;
 
@@ -148,11 +163,11 @@ public class VeiculoView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao atualizar veículo. " + ex.Message);
+                        throw new Exception("Erro ao atualizar veículo: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao atualizar veículo. " + ex.Message);
+                        throw new Exception("Erro ao atualizar veículo: " + ex.Message);
                     }
                     break;
 
@@ -172,11 +187,11 @@ public class VeiculoView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao remover veículo. " + ex.Message);
+                        throw new Exception("Erro ao remover veículo: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao remover veículo. " + ex.Message);
+                        throw new Exception("Erro ao remover veículo: " + ex.Message);
                     }
                     break;
 

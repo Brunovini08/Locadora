@@ -61,11 +61,11 @@ public class CategoriaView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro inesperado ao adicionar categoria. " + ex.Message);
+                        throw new Exception("Erro inesperado ao adicionar categoria: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao adicionar categoria. " + ex.Message);
+                        throw new Exception("Erro ao adicionar categoria: " + ex.Message);
                     }
 
                     break;
@@ -77,25 +77,33 @@ public class CategoriaView
                     try
                     {
                         var listaCategorias = new List<Categoria>();
-
+                        //Adicionando verificao de retorno
                         listaCategorias = categoriaController.ListarCategorias();
-
-                        foreach (var item in listaCategorias)
+                        if (listaCategorias is null)
                         {
                             Console.WriteLine("=============================");
-                            Console.WriteLine(item);
+                            Console.WriteLine("NENHUM CATEGORIA REGISTRADA");
                             Console.WriteLine("=============================\n");
+                        }
+                        else
+                        {
+                            foreach (var item in listaCategorias)
+                            {
+                                Console.WriteLine("=============================");
+                                Console.WriteLine(item);
+                                Console.WriteLine("=============================\n");
+                            }
                         }
 
                         Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro inesperado ao listar categoria. " + ex.Message);
+                        throw new Exception("Erro inesperado ao listar categoria: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao listar categorias. " + ex.Message);
+                        throw new Exception("Erro ao listar categorias: " + ex.Message);
                     }
 
                     break;
@@ -108,18 +116,22 @@ public class CategoriaView
                     try
                     {
                         Categoria categoriaLida = categoriaController.BuscarCategoriaPorNome(nomeLido);
-
+                        //Adicionando verificao de retorno
+                        if (categoriaLida is null)
+                        {
+                            Console.WriteLine("\n===== Nenhuma Categoria Encontrada =====\n");
+                        }
                         Console.WriteLine("\n===== Categoria Encontrada =====\n");
                         Console.WriteLine(categoriaLida);
                         Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro inesperado ao buscar categoria. " + ex.Message);
+                        throw new Exception("Erro inesperado ao buscar categoria: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao listar categorias. " + ex.Message);
+                        throw new Exception("Erro ao listar categorias: " + ex.Message);
                     }
 
                     break;
@@ -148,11 +160,11 @@ public class CategoriaView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro inesperado ao alterar categoria. " + ex.Message);
+                        throw new Exception("Erro inesperado ao alterar categoria: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao alterar categoria. " + ex.Message);
+                        throw new Exception("Erro ao alterar categoria: " + ex.Message);
                     }
 
                     break;

@@ -7,7 +7,7 @@ namespace Locadora.View;
 
 public class LocacaoView
 {
-     public static void ExibirMenuLocacao()
+    public static void ExibirMenuLocacao()
     {
         int op;
         bool convertido;
@@ -64,11 +64,11 @@ public class LocacaoView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao adicionar locação. " + ex.Message);
+                        throw new Exception("Erro ao adicionar locação: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao adicionar locação. " + ex.Message);
+                        throw new Exception("Erro ao adicionar locação: " + ex.Message);
                     }
                     break;
 
@@ -80,23 +80,33 @@ public class LocacaoView
                         var listaLocacoes = new List<Locacao>();
 
                         listaLocacoes = locacaoController.ListarLocacoes();
-
-                        foreach (var item in listaLocacoes)
+                        //Adicionando verificao de retorno
+                        if (listaLocacoes is null)
                         {
                             Console.WriteLine("=============================");
-                            Console.WriteLine(item);
+                            Console.WriteLine("NENHUMA LOCAÇÃO REGISTRADA");
                             Console.WriteLine("=============================\n");
                         }
+                        else
+                        {
+                            foreach (var item in listaLocacoes)
+                            {
+                                Console.WriteLine("=============================");
+                                Console.WriteLine(item);
+                                Console.WriteLine("=============================\n");
+                            }
+                        }
+
 
                         Console.ReadKey();
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao listar locação. " + ex.Message);
+                        throw new Exception("Erro ao listar locação: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao listar locações. " + ex.Message);
+                        throw new Exception("Erro ao listar locações: " + ex.Message);
                     }
                     break;
 
@@ -117,11 +127,11 @@ public class LocacaoView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao cancelar locação. " + ex.Message);
+                        throw new Exception("Erro ao cancelar locação: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao cancelar locação. " + ex.Message);
+                        throw new Exception("Erro ao cancelar locação: " + ex.Message);
                     }
 
                     break;
@@ -142,11 +152,11 @@ public class LocacaoView
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Erro ao encerrar locação. " + ex.Message);
+                        throw new Exception("Erro ao encerrar locação: " + ex.Message);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Erro ao encerrar locação. " + ex.Message);
+                        throw new Exception("Erro ao encerrar locação: " + ex.Message);
                     }
                     break;
 

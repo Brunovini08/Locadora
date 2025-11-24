@@ -7,7 +7,7 @@ namespace Locadora.View;
 
 public class LocacaoView
 {
-     public static void ExibirMenuLocacao()
+    public static void ExibirMenuLocacao()
     {
         int op;
         bool convertido;
@@ -80,13 +80,22 @@ public class LocacaoView
                         var listaLocacoes = new List<Locacao>();
 
                         listaLocacoes = locacaoController.ListarLocacoes();
-
-                        foreach (var item in listaLocacoes)
+                        if (listaLocacoes is null)
                         {
                             Console.WriteLine("=============================");
-                            Console.WriteLine(item);
+                            Console.WriteLine("NENHUMA LOCAÇÃO REGISTRADA");
                             Console.WriteLine("=============================\n");
                         }
+                        else
+                        {
+                            foreach (var item in listaLocacoes)
+                            {
+                                Console.WriteLine("=============================");
+                                Console.WriteLine(item);
+                                Console.WriteLine("=============================\n");
+                            }
+                        }
+
 
                         Console.ReadKey();
                     }
